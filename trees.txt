@@ -1,0 +1,49 @@
+Simple non-generic case class destructuring, with free var binding
+case NonGeneric(x) => x
+TypedOrTest(Unapply(Select(Ident("NonGeneric"), "unapply"), Nil, List(Bind("x", Wildcard()))), Inferred())
+
+Simple non-generic case class destructuring, without free vars
+case NonGeneric(1) => 1
+TypedOrTest(Unapply(Select(Ident("NonGeneric"), "unapply"), Nil, List(Literal(IntConstant(1)))), Inferred())
+
+Non-generic nested case classes
+case Yyy(1, Xxx(i, "S")) => 33+i
+TypedOrTest(Unapply(Select(Ident("Yyy"), "unapply"), Nil, List(Literal(IntConstant(1)), Unapply(Select(Ident("Xxx"), "unapply"), Nil, List(Bind("i", Wildcard()), Literal(StringConstant("S")))))), Inferred())
+
+Generic case class destructuring
+case Some(x) => x
+TypedOrTest(Unapply(TypeApply(Select(Ident("Some"), "unapply"), List(Inferred())), Nil, List(Bind("x", Wildcard()))), Inferred())
+
+Nested generic case classes
+case Some(Some(x)) => x
+TypedOrTest(Unapply(TypeApply(Select(Ident("Some"), "unapply"), List(Inferred())), Nil, List(TypedOrTest(Unapply(TypeApply(Select(Ident("Some"), "unapply"), List(Inferred())), Nil, List(Bind("x", Wildcard()))), Inferred()))), Inferred())
+
+Binding type test
+case x:Xxx => 1
+Bind("x", Typed(Wildcard(), TypeIdent("Xxx")))
+
+Case class with varargs destructuring
+case Sss(1,2) => 1
+TypedOrTest(Unapply(Select(Ident("Sss"), "unapplySeq"), Nil, List(Literal(IntConstant(1)), Literal(IntConstant(2)))), Inferred())
+
+Wildcard type test
+case _: Int => 1
+Typed(Wildcard(), TypeIdent("Int"))
+
+Binding with generic case class
+case a@Some(x) => x
+Bind("a", TypedOrTest(Unapply(TypeApply(Select(Ident("Some"), "unapply"), List(Inferred())), Nil, List(Bind("x", Wildcard()))), Inferred()))
+
+Const
+case 1 => 2
+Literal(IntConstant(1))
+
+Const with binding
+case i @ 1 => 2
+Bind("i", Literal(IntConstant(1)))
+
+Default case
+case _ => 1
+Wildcard()
+
+
