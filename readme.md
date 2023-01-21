@@ -20,6 +20,8 @@ We wanted this to be represented like this:
 case Contains("BEGIN", x, y, "END") => ReplaceWith(x, "AND", y)
 ```
 
+... and then having such rules processed and applied to the sequence.
+
 Normal Scala pattern matching could not support this, hence the macro.
 
 # What this macro does
